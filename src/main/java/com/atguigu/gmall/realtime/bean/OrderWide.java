@@ -39,6 +39,7 @@ public class OrderWide {
     String operate_time;
     String create_date; // 把其他字段处理得到
     String create_hour;
+    Long create_ts;
 
     String province_name;//查询维表得到
     String province_area_code;
@@ -67,6 +68,8 @@ public class OrderWide {
             this.order_status = orderInfo.order_status;
             this.create_time = orderInfo.create_time;
             this.create_date = orderInfo.create_date;
+            this.create_hour = orderInfo.create_hour;
+            this.create_ts = orderInfo.create_ts;
             this.activity_reduce_amount = orderInfo.activity_reduce_amount;
             this.coupon_reduce_amount = orderInfo.coupon_reduce_amount;
             this.original_total_amount = orderInfo.original_total_amount;

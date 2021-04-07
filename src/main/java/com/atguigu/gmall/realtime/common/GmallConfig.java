@@ -7,8 +7,7 @@ package com.atguigu.gmall.realtime.common;
  */
 public class GmallConfig {
     //Hbase的命名空间
-    public static final String HABSE_SCHEMA = "GMALL0820_REALTIME";
-
+    public static final String HABSE_SCHEMA = "default";
     //Phonenix连接的服务器地址
     public static final String PHOENIX_SERVER="jdbc:phoenix:hdp101,hdp102,hdp103:2181";
 

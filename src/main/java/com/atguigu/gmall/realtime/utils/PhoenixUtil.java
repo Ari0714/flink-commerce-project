@@ -83,4 +83,70 @@ public class PhoenixUtil {
         System.out.println(queryList("select * from DIM_BASE_TRADEMARK", JSONObject.class));
     }
 
+
+    //spark的连接方式
+    public static Connection getConn () throws SQLException, ClassNotFoundException {
+
+        Class.forName("org.apache.phoenix.jdbc.PhoenixDriver");
+        Connection connection  = DriverManager.getConnection("jdbc:phoenix:hdp101,hdp102,hdp103:2181");
+
+        return connection;
+    }
+
+
+    // def queryList(sql:String, connection: Connection) ={
+    //
+    //    val listBuffer = new ListBuffer[JSONObject]()
+    //
+    //    val statement: PreparedStatement = connection.prepareStatement(sql)
+    //    val resultSet: ResultSet = statement.executeQuery()
+    //
+    //    val metaData: ResultSetMetaData = resultSet.getMetaData
+    //
+    //    while (resultSet.next()){
+    //
+    //      val jSONObject = new JSONObject()
+    //
+    //      for(i <- 1 to metaData.getColumnCount){
+    //
+    //        jSONObject.put(metaData.getColumnName(i),resultSet.getObject(i))
+    //
+    //      }
+    //
+    //      listBuffer += jSONObject
+    //    }
+    //
+    //    listBuffer
+    //
+    //  }
+
+    public static List<JSONObject> queryList(String sql,Connection connection) throws SQLException, ClassNotFoundException {
+
+        ResultSet resultSet = connection.prepareStatement(sql).executeQuery();
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        ArrayList<JSONObject> arrayList = new ArrayList<>();
+        while (resultSet.next()){
+            JSONObject jsonObject = new JSONObject();
+            for(int i=1;i<=metaData.getColumnCount();i++){
+                jsonObject.put(metaData.getColumnName(i),resultSet.getObject(i));
+            }
+            arrayList.add(jsonObject);
+        }
+        return arrayList;
+    }
+
+    //pk = xxx
+    public static JSONObject queryOne(String sql,Connection connection) throws SQLException, ClassNotFoundException {
+
+        ResultSet resultSet = connection.prepareStatement(sql).executeQuery();
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        JSONObject jsonObject = new JSONObject();
+        while (resultSet.next()){
+            for(int i=1;i<=metaData.getColumnCount();i++){
+                jsonObject.put(metaData.getColumnName(i),resultSet.getObject(i));
+            }
+        }
+        return jsonObject;
+    }
+
 }

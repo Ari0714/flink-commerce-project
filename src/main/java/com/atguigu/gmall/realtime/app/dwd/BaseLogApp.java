@@ -30,7 +30,7 @@ import java.util.Date;
 public class BaseLogApp {
 
     private static String topic = "ods_base_log";
-    private static String consumerId = "consumer20";
+    private static String consumerId = "consumer01";
 
     public static void main(String[] args) throws Exception {
 
@@ -110,15 +110,11 @@ public class BaseLogApp {
             }
         });
 
-        FlinkKafkaProducer<String> dwdStartLog = MyKafkaUtil.getKafkaSink("dwd_start_log");
-        FlinkKafkaProducer<String> dwdPageLog = MyKafkaUtil.getKafkaSink("dwd_page_log");
-        FlinkKafkaProducer<String> dwdDisplaysLog = MyKafkaUtil.getKafkaSink("dwd_displays_log");
-        FlinkKafkaProducer<String> dwdActionsLog = MyKafkaUtil.getKafkaSink("dwd_actions_log");
 
-        splitDS.addSink(dwdPageLog);
-        splitDS.getSideOutput(start).addSink(dwdStartLog);
-        splitDS.getSideOutput(displays).addSink(dwdDisplaysLog);
-        splitDS.getSideOutput(actions).addSink(dwdActionsLog);
+        splitDS.addSink(MyKafkaUtil.getKafkaSink("dwd_page_log"));
+        splitDS.getSideOutput(start).addSink(MyKafkaUtil.getKafkaSink("dwd_start_log"));
+        splitDS.getSideOutput(displays).addSink(MyKafkaUtil.getKafkaSink("dwd_displays_log"));
+        splitDS.getSideOutput(actions).addSink(MyKafkaUtil.getKafkaSink("dwd_actions_log"));
 
 
         env.execute();
