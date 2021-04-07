@@ -86,6 +86,7 @@ public class BaseLogApp {
                             visitDateState.update(dateStr);
                         }
 
+
                         return jsonObject;
                     }
                 });
