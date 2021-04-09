@@ -46,4 +46,9 @@ public class DateTimeUtil {
     public static Boolean noNullAndEmpty(String str){
         return str != null && str.length() > 0;
     }
+
+    public static Boolean nullOrEmpty(String str){
+        return str == null || str.length() == 0;
+    }
+
 }

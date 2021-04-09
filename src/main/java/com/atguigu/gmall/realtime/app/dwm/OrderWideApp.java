@@ -185,7 +185,6 @@ public class OrderWideApp {
 
         withDS.map(x -> JSON.toJSONString(x)).addSink(MyKafkaUtil.getKafkaSink(sinkTopicOrderWide));
 
-        withDS.map(x -> JSON.toJSONString(x)).print("java");
 
         env.execute();
 

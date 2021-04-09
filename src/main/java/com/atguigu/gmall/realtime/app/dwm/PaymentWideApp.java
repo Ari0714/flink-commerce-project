@@ -24,11 +24,11 @@ public class PaymentWideApp {
 
     private static String topicPaymentInfo = "dwd_payment_info";
     private static String topicOrderWide = "dwm_order_wide";
-    private static String consumerId = "consumer37";
+    private static String consumerId = "consumer38";
 
-    private static String sinkTopicOrderWide = "dwm_payment_wide";
+    private static String sinkTopic = "dwm_payment_wide";
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(8);
@@ -78,13 +78,21 @@ public class PaymentWideApp {
                     public void processElement(PaymentInfo paymentInfo, OrderWide orderWide, Context context, Collector<PaymentWide> collector) throws Exception {
                         collector.collect(new PaymentWide(paymentInfo,orderWide));
                     }
-                }).uid("payment_wide_join");
+                });
+
 
         joinDS.print("join");
 
+//        joinDS.addSink(MyKafkaUtil.getKafkaSink(sinkTopic))
+
+        joinDS.map(x -> x.toString()).addSink(MyKafkaUtil.getKafkaSink(sinkTopic));
 
 
-        env.execute();
+        try {
+            env.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 }

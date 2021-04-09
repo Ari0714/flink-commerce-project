@@ -39,6 +39,7 @@ public class BaseDBApp {
         OutputTag<String> favorInfoTag = new OutputTag<String>("favorInfoTag"){};
         OutputTag<String> cartInfoTag = new OutputTag<String>("cartInfoTag"){};
         OutputTag<String> commentInfoTag = new OutputTag<String>("commentInfoTag"){};
+        OutputTag<String> OrderRefundInfoTag = new OutputTag<String>("OrderRefundInfoTag"){};
 
         SingleOutputStreamOperator<String> splitDS = jsonObjDS.process(new ProcessFunction<JSONObject, String>() {
             @Override
@@ -60,6 +61,8 @@ public class BaseDBApp {
                         context.output(cartInfoTag, jsonObject.toString());
                     else if (table.equals("comment_info"))
                         context.output(commentInfoTag, jsonObject.toString());
+                    else if (table.equals("order_refund_info"))
+                        context.output(OrderRefundInfoTag, jsonObject.toString());
                 }
             }
         });
@@ -71,6 +74,7 @@ public class BaseDBApp {
         splitDS.getSideOutput(favorInfoTag).addSink(MyKafkaUtil.getKafkaSink("dwd_favor_info"));
         splitDS.getSideOutput(cartInfoTag).addSink(MyKafkaUtil.getKafkaSink("dwd_cart_info"));
         splitDS.getSideOutput(commentInfoTag).addSink(MyKafkaUtil.getKafkaSink("dwd_comment_info"));
+        splitDS.getSideOutput(OrderRefundInfoTag).addSink(MyKafkaUtil.getKafkaSink("dwd_order_refund_info"));
 
 
         env.execute();

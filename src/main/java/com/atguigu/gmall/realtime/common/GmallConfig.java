@@ -12,6 +12,6 @@ public class GmallConfig {
     public static final String PHOENIX_SERVER="jdbc:phoenix:hdp101,hdp102,hdp103:2181";
 
     //ClickHouse的URL连接地址
-    public static final String CLICKHOUSE_URL="jdbc:clickhouse://hdp102:8123/default";
+    public static final String CLICKHOUSE_URL="jdbc:clickhouse://hdp102:8123/gmall_flink";
 
 }
