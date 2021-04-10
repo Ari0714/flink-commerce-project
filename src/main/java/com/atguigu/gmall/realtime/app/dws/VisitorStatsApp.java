@@ -18,6 +18,7 @@ import org.apache.flink.streaming.api.datastream.*;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
 import org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;
+import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
@@ -32,7 +33,7 @@ public class VisitorStatsApp {
     private static String uvTopic = "dwm_uv";
     private static String jumpTopic = "dwm_jump_detail";
 
-    private static String comsumerId = "consumer0409-02";
+    private static String comsumerId = "consumer0409-03";
 
     private static String sinkTopic = "dwd_page_log";
 
@@ -158,8 +159,6 @@ public class VisitorStatsApp {
         // TODO: 2021/4/9 3. union
         DataStream<VisitorStats> unionVisitorstats = pvVisitorStats.union(uvVisitorStats, svVisitorstats, jumpVisitorstats);
 
-//        unionVisitorstats.print("union");
-
 
         // TODO: 2021/4/9 4.watermark
         SingleOutputStreamOperator<VisitorStats> markDS = unionVisitorstats.assignTimestampsAndWatermarks(new BoundedOutOfOrdernessTimestampExtractor<VisitorStats>(Time.seconds(2)) {
@@ -168,6 +167,7 @@ public class VisitorStatsApp {
                 return visitorStats.getTs();
             }
         });
+
 
         // TODO: 2021/4/9 5.分组取4个维度
         KeyedStream<VisitorStats, Tuple4<String, String, String, String>> keyDS = markDS.keyBy(new KeySelector<VisitorStats, Tuple4<String, String, String, String>>() {
@@ -187,15 +187,15 @@ public class VisitorStatsApp {
 
         // TODO: 2021/4/9 7.窗口聚合 补充时间字段
         SingleOutputStreamOperator<VisitorStats> reduceAndDateDS = winDS.reduce(new ReduceFunction<VisitorStats>() {
-                                                                           @Override
-                                                                           public VisitorStats reduce(VisitorStats st1, VisitorStats st2) throws Exception {
-                                                                               st1.setPv_ct(st1.getPv_ct() + st2.getPv_ct());
-                                                                               st1.setUv_ct(st1.getUv_ct() + st2.getUv_ct());
-                                                                               st1.setSv_ct(st1.getSv_ct() + st2.getSv_ct());
-                                                                               st1.setUj_ct(st1.getUj_ct() + st2.getUj_ct());
-                                                                               return st1;
-                                                                           }
-                                                                       },
+                                                                                    @Override
+                                                                                    public VisitorStats reduce(VisitorStats st1, VisitorStats st2) throws Exception {
+                                                                                        st1.setPv_ct(st1.getPv_ct() + st2.getPv_ct());
+                                                                                        st1.setUv_ct(st1.getUv_ct() + st2.getUv_ct());
+                                                                                        st1.setSv_ct(st1.getSv_ct() + st2.getSv_ct());
+                                                                                        st1.setUj_ct(st1.getUj_ct() + st2.getUj_ct());
+                                                                                        return st1;
+                                                                                    }
+                                                                                },
                 new ProcessWindowFunction<VisitorStats, VisitorStats, Tuple4<String, String, String, String>, TimeWindow>() {
                     @Override
                     public void process(Tuple4<String, String, String, String> stringStringStringStringTuple4, Context context, Iterable<VisitorStats> iterable, Collector<VisitorStats> collector) throws Exception {
@@ -211,10 +211,10 @@ public class VisitorStatsApp {
                 }
         );
 
-//        reduceAndDateDS.print("reduce");
+        reduceAndDateDS.print("reduce");
 
         // TODO: 2021/4/9 8.写入数据库
-        reduceAndDateDS.addSink(ClickHouseUtil.getJdbcSink("insert into visitor_stats_2021 values(?,?,?,?,?,?,?,?,?,?,?,?)"));
+//        reduceAndDateDS.addSink(ClickHouseUtil.getJdbcSink("insert into visitor_stats_2021 values(?,?,?,?,?,?,?,?,?,?,?,?)"));
 
 
         env.execute();

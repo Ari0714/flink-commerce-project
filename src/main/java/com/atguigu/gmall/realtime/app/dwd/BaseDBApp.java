@@ -71,6 +71,7 @@ public class BaseDBApp {
         splitDS.getSideOutput(orderDetailTag).addSink(MyKafkaUtil.getKafkaSink("dwd_detail_info"));
         splitDS.getSideOutput(baseProvinceTag).addSink(MyKafkaUtil.getKafkaSink("dwd_base_province"));
         splitDS.getSideOutput(paymentInfoTag).addSink(MyKafkaUtil.getKafkaSink("dwd_payment_info"));
+
         splitDS.getSideOutput(favorInfoTag).addSink(MyKafkaUtil.getKafkaSink("dwd_favor_info"));
         splitDS.getSideOutput(cartInfoTag).addSink(MyKafkaUtil.getKafkaSink("dwd_cart_info"));
         splitDS.getSideOutput(commentInfoTag).addSink(MyKafkaUtil.getKafkaSink("dwd_comment_info"));

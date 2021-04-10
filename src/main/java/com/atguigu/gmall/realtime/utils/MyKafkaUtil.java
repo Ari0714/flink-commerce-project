@@ -15,7 +15,7 @@ import java.util.Properties;
  * Desc: 操作Kafka的工具类
  */
 public class MyKafkaUtil {
-    private static String KAFKA_SERVER = "hdp101:9092";
+    private static String KAFKA_SERVER = "hdp101:9092,hdp102:9092,hdp103:9092";
     private static String DEFAULT_TOPIC = "DEFAULT_DATA";
 
     //获取FlinkKafkaConsumer

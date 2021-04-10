@@ -24,7 +24,7 @@ public class PaymentWideApp {
 
     private static String topicPaymentInfo = "dwd_payment_info";
     private static String topicOrderWide = "dwm_order_wide";
-    private static String consumerId = "consumer38";
+    private static String consumerId = "consumer41";
 
     private static String sinkTopic = "dwm_payment_wide";
 
@@ -81,12 +81,11 @@ public class PaymentWideApp {
                 });
 
 
-        joinDS.print("join");
+//        joinDS.print("join");
 
-//        joinDS.addSink(MyKafkaUtil.getKafkaSink(sinkTopic))
 
-        joinDS.map(x -> x.toString()).addSink(MyKafkaUtil.getKafkaSink(sinkTopic));
-
+        //类转json串
+        joinDS.map(x -> JSON.toJSONString(x)).addSink(MyKafkaUtil.getKafkaSink(sinkTopic));
 
         try {
             env.execute();
